@@ -1,6 +1,6 @@
-class Node():
-    """A node class for A* Pathfinding"""
+import math
 
+class Node():
     def __init__(self, parent=None, position=None):
         self.parent = parent
         self.position = position
@@ -14,7 +14,7 @@ class Node():
 
 
 def astar(maze, start, end):
-    """Returns a list of tuples as a path from the given start to the given end in the given maze"""
+    
 
     # Create start and end node
     start_node = Node(None, start)
@@ -95,7 +95,52 @@ def astar(maze, start, end):
             # Add the child to the open list
             open_list.append(child)
 
+def sic(paths):
+    sum = 0
+    for path in paths:
+        sum = sum + len(path)
+    return sum - len(paths)
 
+def find_conflict(paths):
+    conflicts = []
+    for i in range(len(paths)-1):
+        for j in range(i+1, len(paths)):
+            for k in range(min(len(paths[i]), len(paths[j]))):
+                if(paths[i][k] == paths[j][k]):
+                    conflicts.append((i+1, j+1, paths[i][k]))
+    return conflicts
+
+
+class NodeInCT:
+    def __init__(self, constraints, solution, total_cost):
+        self.constraints = constraints
+        self.solution = solution
+        self.total_cost = total_cost
+
+def cbs_mapf(paths):
+    open_list = []
+    closed_list = []
+    solution = paths
+    #conflicts = find_conflict(paths)
+    constraints = []
+    total_cost = sic(paths)
+    node = NodeInCT(constraints, solution, total_cost)
+    open_list.append(node)
+    while len(open_list) > 0:
+        current_node = open_list[0]
+        for _, item in enumerate(open_list):
+            if (sic(item.solution) < sic(current_node.solution)):
+                current_node = item
+
+        open_list.remove(current_node)
+        closed_list.append(current_node)
+
+        if find_conflict(current_node.solution) == None:
+            return current_node.solution
+        conflicts = find_conflict(current_node.solution)
+        
+
+        
 def main():
 
     maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -109,12 +154,24 @@ def main():
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-    start = (0, 0)
-    end = (7, 6)
+    agents = input("Enter number of agents: ")
+    start_list = []
+    goal_list = []
+    paths = []
 
-    path = astar(maze, start, end)
-    print(path)
+    for agent in range(agents):
+        start_x = int(input("Enter x coordinate for start position: "))
+        start_y = int(input("Enter y coordinate for start position: "))
+        start_list.append((start_x, start_y))
+        goal_x = int(input("Enter x coordinate for goal position: "))
+        goal_y = int(input("Enter y coordinate for goal position: "))
+        goal_list.append((goal_x, goal_y))
+        
+    for i in range(agents):
+        path = astar(maze, start_list(i), goal_list(i))
+        paths.append(path)
 
 
 if __name__ == '__main__':
     main()
+
