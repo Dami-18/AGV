@@ -59,7 +59,7 @@ def astar(maze, start, end):  # Function for A* algorithm
             if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:  # Condition to check if node within range
                 continue
 
-            if maze[node_position[0]][node_position[1]] != 0:  # Check for obstacles
+            if maze[node_position[0]][node_position[1]] != 1:  # Check for obstacles
                 continue
 
             new_node = Node(current_node, node_position) # Create new node
@@ -140,37 +140,55 @@ def cbs_mapf(paths, start_list, goal_list, maze): # Function for mapf using cbs
         constraint2 = (conflict[1], conflict[2])
 
         solution1 = current_node.solution.copy()  # Create a copy of the current solution
-        maze_copies[conflict[0]-1][conflict[2][0]][conflict[2][1]] = 1 # For the i th agent, change its own copy of maze such that obstacle is created at the conflicting position
-        solution1[conflict[0] - 1] = astar(maze_copies[conflict[0]-1], start_list[conflict[0] - 1], goal_list[conflict[0] - 1]) # Find new path for i th agent considering conflict as an obstacle
-        
         solution2 = current_node.solution.copy()  # Create a copy of the current solution
-        maze_copies[conflict[1]-1][conflict[2][0]][conflict[2][1]] = 1 # For the j th agent, change its own copy of maze such that obstacle is created at the conflicting position
-        solution2[conflict[1] - 1] = astar(maze_copies[conflict[1]-1], start_list[conflict[1] - 1], goal_list[conflict[1] - 1]) # Find new path for j th agent considering conflict as an obstacle
 
-        node1 = NodeInCT(constraint1, solution1, sic(solution1), maze_copies[conflict[0]-1])  # Create left node
-        node2 = NodeInCT(constraint2, solution2, sic(solution2), maze_copies[conflict[1]-1])  # Create right node
-        current_node.left = node1  
-        current_node.right = node2  
-        open_list.append(node1)  # Append left and right nodes to open list
-        open_list.append(node2) 
+        if constraint1[1] != goal_list[constraint1[0]-1] and constraint2[1] == goal_list[constraint2[0]-1]:
+            maze_copies[conflict[0]-1][conflict[2][0]][conflict[2][1]] = 1 # For the i th agent, change its own copy of maze such that obstacle is created at the conflicting position
+            solution1[conflict[0] - 1] = astar(maze_copies[conflict[0]-1], start_list[conflict[0] - 1], goal_list[conflict[0] - 1]) # Find new path for i th agent considering conflict as an obstacle
+            node1 = NodeInCT(constraint1, solution1, sic(solution1), maze_copies[conflict[0]-1])  # Create left node
+            current_node.left = node1
+            open_list.append(node1)
+
+        elif constraint1[1] == goal_list[constraint1[0]-1] and constraint2[1] != goal_list[constraint2[0]-1]:
+            maze_copies[conflict[1]-1][conflict[2][0]][conflict[2][1]] = 1 # For the j th agent, change its own copy of maze such that obstacle is created at the conflicting position
+            solution2[conflict[1] - 1] = astar(maze_copies[conflict[1]-1], start_list[conflict[1] - 1], goal_list[conflict[1] - 1]) # Find new path for j th agent considering conflict as an obstacle
+            node2 = NodeInCT(constraint2, solution2, sic(solution2), maze_copies[conflict[1]-1])  # Create right node
+            current_node.right = node2
+            open_list.append(node2)
+
+        else:
+            solution1 = current_node.solution.copy()  # Create a copy of the current solution
+            maze_copies[conflict[0]-1][conflict[2][0]][conflict[2][1]] = 1 # For the i th agent, change its own copy of maze such that obstacle is created at the conflicting position
+            solution1[conflict[0] - 1] = astar(maze_copies[conflict[0]-1], start_list[conflict[0] - 1], goal_list[conflict[0] - 1]) # Find new path for i th agent considering conflict as an obstacle
+        
+            solution2 = current_node.solution.copy()  # Create a copy of the current solution
+            maze_copies[conflict[1]-1][conflict[2][0]][conflict[2][1]] = 1 # For the j th agent, change its own copy of maze such that obstacle is created at the conflicting position
+            solution2[conflict[1] - 1] = astar(maze_copies[conflict[1]-1], start_list[conflict[1] - 1], goal_list[conflict[1] - 1]) # Find new path for j th agent considering conflict as an obstacle
+
+            node1 = NodeInCT(constraint1, solution1, sic(solution1), maze_copies[conflict[0]-1])  # Create left node
+            node2 = NodeInCT(constraint2, solution2, sic(solution2), maze_copies[conflict[1]-1])  # Create right node
+            current_node.left = node1  
+            current_node.right = node2  
+            open_list.append(node1)  # Append left and right nodes to open list
+            open_list.append(node2) 
 
     return solution
 
         
 def main():
 
-    maze = [[0, 1, 0, 0, 0, 0, 0, 0, 0], # Custom grid/maze with 0 as walkable cells and 1 as obstacles
-            [0, 1, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 0, 0, 1, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 1, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 1, 1, 0]]
+    maze = [[1, 1, 1, 1, 1, 1, 0, 1, 1, 1], # Custom grid/maze with 0 as walkable cells and 1 as obstacles
+            [1, 1, 1, 0, 1, 1, 1, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1, 1, 1, 0, 1, 0],
+            [1, 0, 1, 1, 1, 1, 0, 1, 0, 0],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+            [1, 1, 1, 0, 0, 0, 1, 0, 0, 1]]
 
     # agents = int(input("Enter number of agents: "))
-    agents = 6
+    agents = 3
     start_list = []
     goal_list = []
     paths = []
@@ -183,26 +201,27 @@ def main():
     #     goal_y = int(input("Enter y coordinate for goal position of agent: "))
     #     goal_list.append((goal_x, goal_y))
         
-    start_list.append((1, 5))
-    start_list.append((4, 4))
-    start_list.append((5, 5))
-    start_list.append((1, 4))
-    start_list.append((3, 3))
-    start_list.append((3, 8))
-    goal_list.append((7, 4))
-    goal_list.append((5, 5))
-    goal_list.append((2, 6))
-    goal_list.append((6, 8))
-    goal_list.append((6, 1))
-    goal_list.append((6, 5))
+    start_list.append((0, 0))
+    start_list.append((0, 2))
+    start_list.append((2, 0))
+    # start_list.append((1, 4))
+    # start_list.append((3, 3))
+    # start_list.append((3, 8))
+    goal_list.append((2, 2))
+    goal_list.append((2, 0))
+    goal_list.append((2, 3))
+    # goal_list.append((6, 8))
+    # goal_list.append((6, 1))
+    # goal_list.append((6, 5))
 
     for i in range(agents):
         path = astar(maze, start_list[i], goal_list[i])
         paths.append(path)
 
-    # for path in paths:
-    #     if len(path) == 0:
-    #         print("Path not feasible")
+    for path in paths:
+        if path is None:
+            print("Solution is not feasible")
+            return
     
     print("Initial paths are: ")
     for j in range(agents):
