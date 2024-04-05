@@ -59,7 +59,7 @@ def astar(maze, start, end):  # Function for A* algorithm
             if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:  # Condition to check if node within range
                 continue
 
-            if maze[node_position[0]][node_position[1]] != 1:  # Check for obstacles
+            if maze[node_position[0]][node_position[1]] != 0:  # Check for obstacles
                 continue
 
             new_node = Node(current_node, node_position) # Create new node
