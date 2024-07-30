@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<launch>
+    <node pkg="aruco_detector" type="aruco_detector_node.py" name="aruco_detector_node" output="screen"/>
+</launch>
