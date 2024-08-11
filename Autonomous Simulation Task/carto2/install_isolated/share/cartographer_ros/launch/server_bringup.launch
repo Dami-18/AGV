@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<!-- Start Google Cartographer node with custom configuration file-->
+	<node name="cartographer_node" pkg="cartographer_ros" type="cartographer_node" output="screen">
+	      <param name="configuration_directory" value="$(find tortoisebotpromax_firmware)/config"/>
+              <param name="configuration_basename" value="lidar.lua"/>
+	</node>
+
+</launch>
