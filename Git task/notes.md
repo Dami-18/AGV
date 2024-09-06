@@ -5,7 +5,7 @@
 Personal Access Token: Use it as password for accessing repos 
 
 **git config --global user.name "Your Name"**
-**git config --global user.email "your.email@example.com"** 
+**git config --global user.email "your email"** 
 These should be set before working on any project. Ideally, keep it same as GitHub username and email. In case of two GitHub accounts, they can be changed later at any point of time using the same commands.
 
 When we are inside some folder(using cd), then the command **'git init'** initializes a git repository for that folder. This will track all the changes and commits to that specific directory.
@@ -52,7 +52,7 @@ Without this, the commits will be made in local clone only.
 
 *Note:* -> To rewrite the branch history, like when we remove some commits or squash them, we need to force push the changes. So for that use **'git push origin branch_name -f'**
 
-While squashing my commit with someone else's while sending a PR, it might be that the author name is previous author's. So to change the author's name in last(recent) commit, do **git commit --amend --author="Your New Name <your.email@example.com>"**. This opens in an editor. Then write your name and save and close. Again it opens in an editor. Then don't change the commit message and save and close.
+While squashing my commit with someone else's while sending a PR, it might be that the author name is previous author's. So to change the author's name in last(recent) commit, do **git commit --amend --author="<new_name> <email>"**. This opens in an editor. Then write your name and save and close. Again it opens in an editor. Then don't change the commit message and save and close.
 It will work fine :) 
 
 **git branch branch_name** -> Create a new branch (It is always created from the head). The default branch is main/master. There will be a '*' symbol next to the branch in which we are currently there
